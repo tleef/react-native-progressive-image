@@ -1,6 +1,6 @@
 {
   "name": "@tleef/react-native-progressive-image",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "lib/ProgressiveImage.js",
   "scripts": {
     "build": "tsc",

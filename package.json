@@ -1,0 +1,32 @@
+{
+  "name": "@tleef/react-native-progressive-image",
+  "version": "1.0.0",
+  "main": "lib/ProgressiveImage.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint --fix --project .",
+    "format": "prettier \"src/**/*.ts*\" --write",
+    "test": "mocha \"src/**/*.test.ts\" --require ts-node/register --require source-map-support/register",
+    "test:coverage": "nyc --extension .ts --exclude \"src/**/*.test.ts\" --reporter lcovonly --reporter text yarn test",
+    "prepare": "yarn build"
+  },
+  "repository": "git+https://github.com/tleef/react-native-progressive-image.git",
+  "author": "Tom Lee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tleef/react-native-progressive-image/issues"
+  },
+  "homepage": "https://github.com/tleef/react-native-progressive-image#readme",
+  "devDependencies": {
+    "@types/react": "^16.8.19",
+    "@types/react-native": "^0.57.60",
+    "prettier": "^1.17.1",
+    "ts-node": "^8.2.0",
+    "tslint": "^5.16.0",
+    "typescript": "^3.5.1"
+  },
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-native": "^0.59.8"
+  }
+}

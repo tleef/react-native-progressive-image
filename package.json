@@ -28,5 +28,8 @@
   "peerDependencies": {
     "react": ">= 16.5.x",
     "react-native": ">= 0.57.x"
+  },
+  "dependencies": {
+    "react-native-reanimated": "^1.2.0"
   }
 }

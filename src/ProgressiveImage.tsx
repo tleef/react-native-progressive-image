@@ -1,10 +1,40 @@
 import React from "react";
-import { Animated, Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
+import Animated, { Easing } from "react-native-reanimated";
+
+const { Value, timing } = Animated;
+
+interface ISource {
+  uri: string;
+}
 
 interface IProps {
-  source: any;
-  base64: string;
+  key?: string;
+  imageUri?: string;
+  imageSource?: ISource;
+  previewUri?: string;
+  previewSource?: ISource;
+  previewBlurRadius?: number;
+  style?: any;
+}
+
+interface IContainerProps {
+  key?: string;
   style: any;
+}
+
+interface IPreviewProps {
+  key?: string;
+  style: any;
+  blurRadius: number;
+  source: ISource;
+}
+
+interface IImageProps {
+  key?: string;
+  style: any;
+  source: ISource;
+  onLoad: () => void;
 }
 
 const styles = StyleSheet.create({
@@ -21,33 +51,74 @@ const styles = StyleSheet.create({
   },
 });
 
+const emptySource = { uri: "" };
+
 export default class ProgressiveImage extends React.PureComponent<IProps> {
-  private readonly _imageOpacity: Animated.Value;
+  private readonly opacity: Animated.Value<number>;
+  private readonly anim: Animated.BackwardCompatibleWrapper;
 
   constructor(props: any) {
     super(props);
 
-    this._imageOpacity = new Animated.Value(0);
+    this.opacity = new Value(0);
+    this.anim = timing(this.opacity, {
+      duration: 500,
+      toValue: 1,
+      easing: Easing.inOut(Easing.ease),
+    });
+
+    this.onImageLoad = this.onImageLoad.bind(this);
   }
 
   public render() {
-    const { source, base64, style } = this.props;
+    let {
+      key,
+      imageUri,
+      imageSource,
+      previewUri,
+      previewSource,
+      previewBlurRadius,
+      style,
+    } = this.props;
+
+    imageSource = imageUri ? { uri: imageUri } : imageSource;
+    previewSource = previewUri ? { uri: previewUri } : previewSource;
+
+    const containerProps: IContainerProps = {
+      style: styles.container,
+    };
+
+    const previewProps: IPreviewProps = {
+      style: styles.image,
+      blurRadius: typeof previewBlurRadius === "number" ? previewBlurRadius : 2,
+      source: previewSource || emptySource,
+    };
+
+    const imageProps: IImageProps = {
+      style: [styles.image, { opacity: this.opacity }],
+      source: imageSource || emptySource,
+      onLoad: this.onImageLoad,
+    };
+
+    if (style) {
+      containerProps.style = [styles.container, style];
+    }
+
+    if (key) {
+      containerProps.key = `${key}-container`;
+      previewProps.key = `${key}-preview`;
+      imageProps.key = `${key}-image`;
+    }
 
     return (
-      <View style={[styles.container, style]}>
-        <Image style={styles.image} blurRadius={2} source={{ uri: base64 }} />
-        <Animated.Image
-          style={[styles.image, { opacity: this._imageOpacity }]}
-          source={source}
-          onLoad={this.onImageLoad}
-        />
+      <View {...containerProps}>
+        <Image {...previewProps} />
+        <Animated.Image {...imageProps} />
       </View>
     );
   }
 
-  public onImageLoad = () => {
-    Animated.timing(this._imageOpacity, {
-      toValue: 1,
-    }).start();
-  };
+  private onImageLoad() {
+    this.anim.start();
+  }
 }

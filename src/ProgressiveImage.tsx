@@ -9,7 +9,7 @@ interface ISource {
 }
 
 interface IProps {
-  key?: string;
+  innerKey?: string;
   imageUri?: string;
   imageSource?: ISource;
   previewUri?: string;
@@ -72,7 +72,7 @@ export default class ProgressiveImage extends React.PureComponent<IProps> {
 
   public render() {
     let {
-      key,
+      innerKey,
       imageUri,
       imageSource,
       previewUri,
@@ -104,15 +104,15 @@ export default class ProgressiveImage extends React.PureComponent<IProps> {
       containerProps.style = [styles.container, style];
     }
 
-    if (key) {
-      containerProps.key = `${key}-container`;
-      previewProps.key = `${key}-preview`;
-      imageProps.key = `${key}-image`;
+    if (innerKey) {
+      containerProps.key = `${innerKey}-container`;
+      previewProps.key = `${innerKey}-preview`;
+      imageProps.key = `${innerKey}-image`;
     }
 
     return (
       <View {...containerProps}>
-        <Image {...previewProps} />
+        {previewSource ? <Image {...previewProps} /> : null}
         <Animated.Image {...imageProps} />
       </View>
     );

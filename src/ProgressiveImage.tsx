@@ -56,11 +56,13 @@ const emptySource = { uri: "" };
 export default class ProgressiveImage extends React.PureComponent<IProps> {
   private readonly opacity: Animated.Value<number>;
   private readonly anim: Animated.BackwardCompatibleWrapper;
+  private animFinished: boolean;
 
   constructor(props: any) {
     super(props);
 
     this.opacity = new Value(0);
+    this.animFinished = false;
     this.anim = timing(this.opacity, {
       duration: 500,
       toValue: 1,
@@ -68,6 +70,7 @@ export default class ProgressiveImage extends React.PureComponent<IProps> {
     });
 
     this.onImageLoad = this.onImageLoad.bind(this);
+    this.onAnimFinished = this.onAnimFinished.bind(this);
   }
 
   public render() {
@@ -118,7 +121,13 @@ export default class ProgressiveImage extends React.PureComponent<IProps> {
     );
   }
 
+  private onAnimFinished({ finished }: { finished: boolean }) {
+    this.animFinished = finished;
+  }
+
   private onImageLoad() {
-    this.anim.start();
+    if (!this.animFinished) {
+      this.anim.start(this.onAnimFinished);
+    }
   }
 }

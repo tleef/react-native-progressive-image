@@ -13,6 +13,7 @@ interface ISource {
 interface IProps {
   noCache: boolean;
   noPreview: boolean;
+  noAnimation: boolean;
   imageUri?: string;
   imageSource?: ISource;
   previewUri?: string;
@@ -30,6 +31,7 @@ export default class ProgressiveImage extends React.Component<IProps, IState> {
   public static defaultProps = {
     noCache: false,
     noPreview: false,
+    noAnimation: false,
     previewBlurRadius: 2,
     animDuration: 500,
   };
@@ -127,6 +129,7 @@ export default class ProgressiveImage extends React.Component<IProps, IState> {
     let {
       noCache,
       noPreview,
+      noAnimation,
       previewUri,
       previewSource,
       previewBlurRadius,
@@ -153,7 +156,9 @@ export default class ProgressiveImage extends React.Component<IProps, IState> {
             source={previewSource}
           />
         ) : null}
-        {imageSource ? (
+        {imageSource && noAnimation ? (
+          <Image style={styles.image} source={imageSource} />
+        ) : imageSource ? (
           <Animated.Image
             style={[styles.image, { opacity: this.opacity }]}
             source={imageSource}

@@ -126,17 +126,41 @@ export default class ProgressiveImage extends React.Component<IProps, IState> {
   }
 
   public render() {
+    let { style } = this.props;
+
+    return (
+      <View style={[styles.container, style]}>
+        {this.renderPreview()}
+        {this.renderImage()}
+      </View>
+    );
+  }
+
+  protected renderPreview() {
     let {
-      noCache,
       noPreview,
-      noAnimation,
       previewUri,
       previewSource,
       previewBlurRadius,
-      style,
     } = this.props;
 
     previewSource = previewUri ? { uri: previewUri } : previewSource;
+
+    if (noPreview || !previewSource) {
+      return null;
+    }
+
+    return (
+      <Image
+        style={styles.image}
+        blurRadius={previewBlurRadius}
+        source={previewSource}
+      />
+    );
+  }
+
+  protected renderImage() {
+    let { noCache, noAnimation } = this.props;
 
     let imageSource;
     if (!noCache && this.state.imageUri) {
@@ -147,25 +171,20 @@ export default class ProgressiveImage extends React.Component<IProps, IState> {
       imageSource = this.props.imageSource;
     }
 
+    if (!imageSource) {
+      return null;
+    }
+
+    if (noAnimation) {
+      return <Image style={styles.image} source={imageSource} />;
+    }
+
     return (
-      <View style={[styles.container, style]}>
-        {!noPreview && previewSource ? (
-          <Image
-            style={styles.image}
-            blurRadius={previewBlurRadius}
-            source={previewSource}
-          />
-        ) : null}
-        {imageSource && noAnimation ? (
-          <Image style={styles.image} source={imageSource} />
-        ) : imageSource ? (
-          <Animated.Image
-            style={[styles.image, { opacity: this.opacity }]}
-            source={imageSource}
-            onLoad={this.onImageLoad}
-          />
-        ) : null}
-      </View>
+      <Animated.Image
+        style={[styles.image, { opacity: this.opacity }]}
+        source={imageSource}
+        onLoad={this.onImageLoad}
+      />
     );
   }
 

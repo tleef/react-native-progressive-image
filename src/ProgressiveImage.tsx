@@ -6,28 +6,31 @@ import Animated, { Easing } from "react-native-reanimated";
 const cache = new Cache();
 const { Value, timing } = Animated;
 
-interface ISource {
+export interface ImageSource {
   uri: string;
 }
 
-interface IProps {
+export interface ProgressiveImageProps {
   noCache: boolean;
   noPreview: boolean;
   noAnimation: boolean;
   imageUri?: string;
-  imageSource?: ISource;
+  imageSource?: ImageSource;
   previewUri?: string;
-  previewSource?: ISource;
+  previewSource?: ImageSource;
   previewBlurRadius: number;
   animDuration: number;
   style?: any;
 }
 
-interface IState {
+export interface ProgressiveImageState {
   imageUri?: string;
 }
 
-export default class ProgressiveImage extends React.Component<IProps, IState> {
+export default class ProgressiveImage<
+  P extends ProgressiveImageProps = ProgressiveImageProps,
+  S extends ProgressiveImageState = ProgressiveImageState
+> extends React.Component<P, S> {
   public static defaultProps = {
     noCache: false,
     noPreview: false,
@@ -40,7 +43,7 @@ export default class ProgressiveImage extends React.Component<IProps, IState> {
   private readonly anim: Animated.BackwardCompatibleWrapper;
   private animFinished: boolean;
 
-  constructor(props: IProps) {
+  constructor(props: P) {
     super(props);
 
     this.state = {
@@ -63,7 +66,7 @@ export default class ProgressiveImage extends React.Component<IProps, IState> {
     this.resolveImageUri();
   }
 
-  public componentDidUpdate(prevProps: Readonly<IProps>): void {
+  public componentDidUpdate(prevProps: Readonly<ProgressiveImageProps>): void {
     let prevImageUri: string | undefined;
     if (prevProps.imageUri) {
       prevImageUri = prevProps.imageUri;

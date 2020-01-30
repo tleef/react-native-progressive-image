@@ -28,9 +28,8 @@ export interface ProgressiveImageState {
 }
 
 export default class ProgressiveImage<
-  P extends ProgressiveImageProps = ProgressiveImageProps,
-  S extends ProgressiveImageState = ProgressiveImageState
-> extends React.Component<P, S> {
+  P extends ProgressiveImageProps = ProgressiveImageProps
+> extends React.Component<P, ProgressiveImageState> {
   public static defaultProps = {
     noCache: false,
     noPreview: false,
@@ -140,14 +139,12 @@ export default class ProgressiveImage<
   }
 
   protected renderPreview() {
-    let {
-      noPreview,
-      previewUri,
-      previewSource,
-      previewBlurRadius,
-    } = this.props;
+    let { noPreview, previewBlurRadius } = this.props;
 
-    previewSource = previewUri ? { uri: previewUri } : previewSource;
+    let previewUri: string | undefined = this.props.previewUri;
+    let previewSource: ImageSource | undefined = previewUri
+      ? { uri: previewUri }
+      : this.props.previewSource;
 
     if (noPreview || !previewSource) {
       return null;
@@ -165,11 +162,12 @@ export default class ProgressiveImage<
   protected renderImage() {
     let { noCache, noAnimation } = this.props;
 
-    let imageSource;
-    if (!noCache && this.state.imageUri) {
-      imageSource = { uri: this.state.imageUri };
-    } else if (noCache && this.props.imageUri) {
-      imageSource = { uri: this.props.imageUri };
+    let imageSource: ImageSource | undefined;
+    let imageUri: string | undefined;
+    if (!noCache && (imageUri = this.state.imageUri)) {
+      imageSource = { uri: imageUri };
+    } else if (noCache && (imageUri = this.props.imageUri)) {
+      imageSource = { uri: imageUri };
     } else if (noCache && this.props.imageSource) {
       imageSource = this.props.imageSource;
     }
